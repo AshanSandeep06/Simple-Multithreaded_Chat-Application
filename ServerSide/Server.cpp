@@ -34,26 +34,30 @@ public:
         {
             int bytesRead;
 
+            char buffer[4096];
+            std::string clientMessage;
+            std::string serverMessage;
+
             while (true)
             {
                 bytesRead = 0;
 
-                char buffer[1024];
+                memset(buffer, 0, sizeof(buffer));
+                clientMessage = buffer;
                 bytesRead = recv(clientSocket, buffer, sizeof(buffer), 0);
 
-                cout << clientSocket << std::endl
-                     << buffer << std::endl
-                     << sizeof(buffer) << std::endl
-                     << bytesRead << std::endl;
+                // cout << clientSocket << std::endl
+                //      << buffer << std::endl
+                //      << sizeof(buffer) << std::endl
+                //      << bytesRead << std::endl;
+
+                cout << "Client Says : " << buffer << std ::endl;
 
                 // Sending again to the Client
-
-                std::string message;
-                message = "";
                 cout << "Enter a message to Client : ";
-                std::getline(std::cin, message);
+                std::getline(std::cin, serverMessage);
 
-                send(clientSocket, message.c_str(), message.length(), 0);
+                send(clientSocket, serverMessage.c_str(), serverMessage.length(), 0);
                 // send(clientSocket, buffer, bytesRead, 0);
             }
 
@@ -133,6 +137,7 @@ int main()
     }
 
     std::cout << "Server has Started in Port: " << PORT << std::endl;
+    // -------------------------
 
     while (true)
     {

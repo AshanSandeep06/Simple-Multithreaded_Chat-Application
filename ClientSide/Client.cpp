@@ -165,20 +165,28 @@ int main()
 
     std::cout << "Connected to the server" << std::endl;
 
+    char buffer[4096];
+    std::string clientMessage;
+    std::string serverMessage;
+
     // Send and receive data with the server
     while (true)
     {
-        std::string message;
-        message = "";
         std::cout << "Enter a message: ";
-        std::getline(std::cin, message);
+        std::getline(std::cin, clientMessage);
 
-        if (message.empty())
+        if (clientMessage == "exit")
+        {
+            std::cout << "Client has been disconnected";
+            break;
+        }
+
+        if (clientMessage.empty())
         {
             continue;
         }
 
-        iResult = send(clientSocket, message.c_str(), message.length(), 0);
+        iResult = send(clientSocket, clientMessage.c_str(), clientMessage.length(), 0);
         if (iResult == SOCKET_ERROR)
         {
             std::cerr << "send() failed with error: " << WSAGetLastError() << std::endl;
@@ -188,11 +196,13 @@ int main()
         }
 
         // Receive response from the server
-        char buffer[1024];
+        memset(buffer, 0, sizeof(buffer));
+        serverMessage = buffer;
+
         iResult = recv(clientSocket, buffer, sizeof(buffer), 0);
         if (iResult > 0)
         {
-            std::cout << "Server response: " << buffer << std::endl;
+            std::cout << "Server Says: " << buffer << std::endl;
         }
         else if (iResult == 0)
         {
